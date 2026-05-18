@@ -206,6 +206,9 @@ function Tracker({ account, onLogout }) {
         if (d.ownedAccessories !== undefined) setOwnedAccessories(d.ownedAccessories)
         if (d.badApps !== undefined) setBadApps(d.badApps)
         if (d.friends !== undefined) setFriends(d.friends)
+      } else {
+        // First time on this device — create the Firestore doc so friends can find them
+        setDoc(doc(db, 'users', account), { email: account, plantLevel: 1, coins: 0 }, { merge: true }).catch(() => {})
       }
       setLoaded(true)
     }).catch(() => setLoaded(true))
@@ -316,7 +319,7 @@ function Tracker({ account, onLogout }) {
     setTimers(prev => ({ ...prev, [id]: { running: true, elapsed: prev[id]?.elapsed || 0 } }))
     timerRefs.current[id] = setInterval(() => {
       const cur = activeAppRef.current
-      if (cur && ignored.includes(cur)) return
+      if (cur !== null && ignored.includes(cur)) return
       setTimers(prev => ({ ...prev, [id]: { running: true, elapsed: (prev[id]?.elapsed || 0) + 1 } }))
     }, 1000)
   }
@@ -656,7 +659,7 @@ function Tracker({ account, onLogout }) {
               if (friends.includes(f)) { setFriendError('Already added.'); return }
               try {
                 const snap = await getDoc(doc(db, 'users', f))
-                if (!snap.exists()) { setFriendError('No FocusApp account found for that email.'); return }
+                if (!snap.exists()) { setFriendError('No BloomUp account found for that email.'); return }
                 setFriends(prev => [...prev, f])
                 setNewFriend('')
                 setFriendError('')
