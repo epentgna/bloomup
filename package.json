@@ -1,0 +1,55 @@
+{
+  "name": "bloomup",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "author": "Mateus",
+  "description": "Grow your plant. Focus your life.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron:dev": "ELECTRON_DEV=true electron .",
+    "electron:build": "vite build && electron .",
+    "dist": "vite build && electron-builder --mac --win"
+  },
+  "build": {
+    "appId": "com.bloomup.app",
+    "productName": "BloomUp",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/**/*",
+      "!node_modules/.cache"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "epentgna",
+      "repo": "bloomup"
+    }
+  },
+  "dependencies": {
+    "firebase": "^11.7.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "electron": "^41.5.0",
+    "electron-builder": "^26.8.1",
+    "vite": "^5.4.2"
+  }
+}
