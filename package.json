@@ -14,31 +14,6 @@
     "electron:build": "vite build && electron .",
     "dist": "vite build && electron-builder --mac --win"
   },
-  "build": {
-    "appId": "com.bloomup.app",
-    "productName": "BloomUp",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/**/*",
-      "electron/**/*",
-      "public/**/*",
-      "!node_modules/.cache"
-    ],
-    "mac": {
-      "category": "public.app-category.productivity",
-      "target": "dmg"
-    },
-    "win": {
-      "target": "nsis"
-    },
-    "publish": {
-      "provider": "github",
-      "owner": "epentgna",
-      "repo": "bloomup"
-    }
-  },
   "dependencies": {
     "firebase": "^11.7.1",
     "react": "^18.3.1",
