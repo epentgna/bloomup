@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Helpers ----
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    function isOwnerByDoc() {
+      // Only allow writes where the payload's `uid` field matches the caller.
+      return isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    // ---- /users/{uid} : per-user game state ----
+    // Any signed-in user can read other users (needed for the friend leaderboard).
+    // Only the owner can write their own document.
+    match /users/{uid} {
+      allow read:   if isSignedIn();
+      allow create: if isOwner(uid) && request.resource.data.uid == uid;
+      allow update: if isOwner(uid)
+                       && (!('uid' in request.resource.data)
+                           || request.resource.data.uid == uid);
+      allow delete: if isOwner(uid);
+    }
+
+    // ---- /users-by-email/{lowercaseEmail} : public-readable email→uid map ----
+    // Friend lookup needs this to be readable. Writes are locked to the
+    // signed-in user, and the `uid` field in the payload must match.
+    match /users-by-email/{email} {
+      allow read:   if isSignedIn();
+      allow create: if isOwnerByDoc();
+      allow update: if isOwnerByDoc();
+      allow delete: if isOwnerByDoc();
+    }
+
+    // ---- Default deny everything else ----
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

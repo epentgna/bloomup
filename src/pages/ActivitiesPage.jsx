@@ -3,7 +3,7 @@ import { useUserData } from '../store/useUserData'
 import { useToast } from '../components/Toast'
 import { fmtClock } from '../utils/format'
 import { looksLikeGame } from '../data/gameKeywords'
-import { IGNORED_APPS } from '../data/badAppsDefaults'
+import { isBadApp } from '../utils/matchBadApp'
 import { todayKey } from '../utils/storage'
 
 const EMOJI_CHOICES = ['🏆','📖','🏃','💪','🎨','🎵','🧘','✍️','🍳','🌳','🧹','💼','📚','⚽','🚴','🏊','🧠','💻']
@@ -18,10 +18,42 @@ export default function ActivitiesPage({ activeApp }) {
   const activities = u.activities
   const timers     = u.timers
 
-  // Cleanup any orphaned intervals on unmount.
-  useEffect(() => () => {
-    Object.values(timerRefs.current).forEach(h => h && clearInterval(h))
-  }, [])
+  // Keep live refs of values the timer closure needs to read each tick,
+  // so prop/state changes don't get trapped in a stale closure.
+  const activeAppRef = useRef(activeApp)
+  const badAppsRef = useRef(u.badApps)
+  useEffect(() => { activeAppRef.current = activeApp }, [activeApp])
+  useEffect(() => { badAppsRef.current = u.badApps }, [u.badApps])
+
+  // Restart intervals for any timer that was running when we left this page.
+  // We track wall-clock `startedAt` so elapsed advances even when the page is
+  // unmounted (Pomodoro tab, Shop, etc.).
+  useEffect(() => {
+    Object.entries(u.timers).forEach(([id, t]) => {
+      if (t?.running && !timerRefs.current[id]) {
+        const baseElapsed = t.elapsed || 0
+        const baseStarted = t.startedAt || Date.now()
+        // Sync any time that passed while unmounted.
+        const drift = Math.max(0, Math.floor((Date.now() - baseStarted) / 1000))
+        if (drift > 0) {
+          setTimer(id, prev => ({ ...prev, elapsed: baseElapsed + drift, startedAt: Date.now() }))
+        }
+        timerRefs.current[id] = setInterval(() => {
+          const cur = activeAppRef.current
+          if (cur && isBadApp(cur, badAppsRef.current)) return
+          setTimer(id, prev => ({ ...prev, running: true, elapsed: (prev?.elapsed || 0) + 1 }))
+        }, 1000)
+      }
+    })
+    return () => {
+      Object.entries(timerRefs.current).forEach(([id, h]) => {
+        if (h) {
+          clearInterval(h)
+          timerRefs.current[id] = null
+        }
+      })
+    }
+  }, [u.loaded]) // run once after data loads
 
   function setTimer(id, value) {
     u.setField('timers', t => ({
@@ -34,8 +66,10 @@ export default function ActivitiesPage({ activeApp }) {
     if (timerRefs.current[id]) return
     setTimer(id, prev => ({ running: true, elapsed: prev?.elapsed || 0, startedAt: Date.now() }))
     timerRefs.current[id] = setInterval(() => {
-      const cur = activeApp
-      if (cur && IGNORED_APPS.includes(cur)) return
+      // Pause counting only when the user has switched to a distracting app.
+      // The BloomUp window itself doesn't pause the timer.
+      const cur = activeAppRef.current
+      if (cur && isBadApp(cur, badAppsRef.current)) return
       setTimer(id, prev => ({ ...prev, running: true, elapsed: (prev?.elapsed || 0) + 1 }))
     }, 1000)
   }
