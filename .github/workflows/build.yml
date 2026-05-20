@@ -23,7 +23,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build and publish
+      - name: Build web assets (Vite)
+        run: npm run build
+
+      - name: Package and publish
         run: |
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             npx electron-builder --win --publish always

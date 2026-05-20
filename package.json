@@ -14,6 +14,51 @@
     "electron:build": "vite build && cross-env ELECTRON_RUN_AS_NODE= electron .",
     "dist": "vite build && electron-builder --mac --win"
   },
+  "build": {
+    "appId": "com.bloomup.app",
+    "productName": "BloomUp",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "electron/main.cjs"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] },
+        { "target": "zip", "arch": ["x64", "arm64"] }
+      ],
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "writeUpdateInfo": false
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "epentgna",
+      "repo": "bloomup"
+    }
+  },
   "dependencies": {
     "electron-updater": "^6.8.3",
     "firebase": "^11.7.1",
