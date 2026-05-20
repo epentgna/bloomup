@@ -10,11 +10,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "electron:dev": "ELECTRON_DEV=true electron .",
-    "electron:build": "vite build && electron .",
+    "electron:dev": "concurrently -k -n vite,electron -c blue,green \"vite\" \"wait-on http://localhost:5173 && cross-env ELECTRON_DEV=true ELECTRON_RUN_AS_NODE= electron .\"",
+    "electron:build": "vite build && cross-env ELECTRON_RUN_AS_NODE= electron .",
     "dist": "vite build && electron-builder --mac --win"
   },
   "dependencies": {
+    "electron-updater": "^6.8.3",
     "firebase": "^11.7.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -23,8 +24,11 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^9.0.1",
+    "cross-env": "^7.0.3",
     "electron": "^41.5.0",
     "electron-builder": "^26.8.1",
-    "vite": "^5.4.2"
+    "vite": "^5.4.2",
+    "wait-on": "^8.0.1"
   }
 }
