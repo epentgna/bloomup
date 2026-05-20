@@ -1,0 +1,16 @@
+export const ACCESSORIES = [
+  { id: 'sparkles', name: 'Sparkles', emoji: '✨', price: 20 },
+  { id: 'mushroom', name: 'Mushroom', emoji: '🍄', price: 40 },
+  { id: 'flowers', name: 'Flowers', emoji: '🌸', price: 50 },
+  { id: 'butterfly', name: 'Butterfly', emoji: '🦋', price: 75 },
+  { id: 'sun', name: 'Sunshine', emoji: '☀️', price: 90 },
+  { id: 'rainbow', name: 'Rainbow', emoji: '🌈', price: 120 },
+  { id: 'star', name: 'Star', emoji: '⭐', price: 150 },
+  { id: 'crown', name: 'Crown', emoji: '👑', price: 200 },
+  { id: 'ladybug', name: 'Ladybug', emoji: '🐞', price: 60 },
+  { id: 'snail', name: 'Snail', emoji: '🐌', price: 35 },
+  { id: 'bee', name: 'Bee', emoji: '🐝', price: 80 },
+  { id: 'moon', name: 'Moon', emoji: '🌙', price: 110 },
+  { id: 'fire', name: 'Phoenix Spark', emoji: '🔥', price: 175 },
+  { id: 'gem', name: 'Gem', emoji: '💎', price: 250 },
+]
