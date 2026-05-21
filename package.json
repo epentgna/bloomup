@@ -37,16 +37,22 @@
       ],
       "identity": null,
       "hardenedRuntime": false,
-      "gatekeeperAssess": false,
-      "artifactName": "${productName}-${arch}.${ext}"
+      "gatekeeperAssess": false
     },
     "dmg": {
-      "writeUpdateInfo": false
+      "writeUpdateInfo": false,
+      "artifactName": "${productName}-${arch}.${ext}"
     },
     "win": {
       "target": [
         { "target": "nsis", "arch": ["x64"] }
-      ],
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
       "artifactName": "${productName}-Setup.${ext}"
     },
     "nsis": {
