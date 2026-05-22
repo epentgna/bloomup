@@ -32,16 +32,16 @@
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
-        { "target": "dmg", "arch": ["x64", "arm64"] },
-        { "target": "zip", "arch": ["x64", "arm64"] }
+        { "target": "zip", "arch": ["arm64"] },
+        { "target": "zip", "arch": ["x64"] }
       ],
       "identity": "-",
       "hardenedRuntime": false,
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "artifactName": "${productName}-${arch}-mac.${ext}"
     },
     "dmg": {
-      "writeUpdateInfo": false,
-      "artifactName": "${productName}-${arch}.${ext}"
+      "writeUpdateInfo": false
     },
     "win": {
       "target": [
@@ -54,12 +54,6 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "artifactName": "${productName}-Setup.${ext}"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
     },
     "publish": {
       "provider": "github",
